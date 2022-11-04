@@ -1,18 +1,32 @@
 import { TextInput, Button, Group, Box, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { createFund } from "../components/utils";
 
 const CreateFund = () => {
   const form = useForm({
     initialValues: {
       name: "",
-      description: "",
+      symbolSuffix: "",
       references: "",
     },
   });
 
+  const onFormSubmit = async (values: typeof form.values) => {
+    const references = values.references.split(/\r?\n/);
+    const fundTokenAddress = await createFund(
+      values.name,
+      values.symbolSuffix,
+      references
+    );
+    console.log(
+      "Successfully created fund, fund token address:",
+      fundTokenAddress
+    );
+  };
+
   return (
     <Box sx={{ maxWidth: 300 }} mx="auto">
-      <form onSubmit={form.onSubmit((values) => console.log(values))}>
+      <form onSubmit={form.onSubmit(onFormSubmit)}>
         <TextInput
           withAsterisk
           label="Name"
@@ -21,12 +35,11 @@ const CreateFund = () => {
         />
         <TextInput
           withAsterisk
-          label="Description"
-          placeholder="Provide a brief description"
-          {...form.getInputProps("description")}
+          label="Fundcoin symbol"
+          placeholder="3-5 letter identifier for your fund"
+          {...form.getInputProps("symbolSuffix")}
         />
         <Textarea
-          withAsterisk
           autosize
           minRows={2}
           label="References"
