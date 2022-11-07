@@ -27,6 +27,9 @@ function App({ Component, pageProps }: AppProps) {
               <Link className={styles.nav_link} href="/">
                 Home
               </Link>
+              <Link className={styles.nav_link} href="/create-fund">
+                Create Fund
+              </Link>
             </Navbar.Section>
             <Navbar.Section grow mt="md">
               {/* */}
