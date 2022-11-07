@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ListFunds } from "../components/ListFunds";
 import styles from "../styles/Home.module.css";
 
+const navbarClassName = styles.nav_link;
+
 export default function Home() {
   return (
     <div className={styles.container}>

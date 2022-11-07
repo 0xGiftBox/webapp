@@ -9,7 +9,7 @@ import {
   Title,
 } from "@mantine/core";
 import Link from "next/link";
-
+import styles from "./../styles/Home.module.css";
 function App({ Component, pageProps }: AppProps) {
   return (
     <MantineProvider
@@ -24,7 +24,9 @@ function App({ Component, pageProps }: AppProps) {
         navbar={
           <Navbar p="md" width={{ sm: 250 }} style={{ width: 250 }}>
             <Navbar.Section pb={20}>
-              <Link href="/">Home</Link>
+              <Link className={styles.nav_link} href="/">
+                Home
+              </Link>
             </Navbar.Section>
             <Navbar.Section grow mt="md">
               {/* */}
