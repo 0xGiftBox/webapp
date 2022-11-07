@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { MantineProvider } from "@mantine/core";
 import { AppShell, Navbar, Header } from "@mantine/core";
+import Link from "next/link";
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -15,8 +16,13 @@ function App({ Component, pageProps }: AppProps) {
       <AppShell
         padding="md"
         navbar={
-          <Navbar width={{ base: 300 }} height={500} p="xs">
-            {/* Navbar content */}
+          <Navbar p="md" width={{ sm: 250 }} style={{ width: 250 }}>
+            <Navbar.Section pb={20}>
+              <Link href="/">Home</Link>
+            </Navbar.Section>
+            <Navbar.Section grow mt="md">
+              {/* */}
+            </Navbar.Section>
           </Navbar>
         }
         header={
