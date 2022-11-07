@@ -1,7 +1,13 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { MantineProvider } from "@mantine/core";
-import { AppShell, Navbar, Header } from "@mantine/core";
+import {
+  MantineProvider,
+  AppShell,
+  Navbar,
+  Header,
+  Group,
+  Title,
+} from "@mantine/core";
 import Link from "next/link";
 
 function App({ Component, pageProps }: AppProps) {
@@ -26,8 +32,12 @@ function App({ Component, pageProps }: AppProps) {
           </Navbar>
         }
         header={
-          <Header height={60} p="xs">
-            {/* Header content */}
+          <Header height={70} p="md">
+            <Group position="apart">
+              <Group>
+                <Title order={1}>Giftbox</Title>
+              </Group>
+            </Group>
           </Header>
         }
         styles={(theme) => ({
