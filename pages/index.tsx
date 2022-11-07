@@ -20,7 +20,6 @@ export default function Home() {
         </p>
         <ListFunds />
       </main>
-
       <footer className={styles.footer}></footer>
     </div>
   );
