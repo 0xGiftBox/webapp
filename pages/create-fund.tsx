@@ -1,8 +1,11 @@
 import { TextInput, Button, Group, Box, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { createFund } from "../components/utils";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { createFund } from "../utils/utils";
 
 const CreateFund = () => {
+  const router = useRouter();
   const form = useForm({
     initialValues: {
       name: "",
@@ -11,17 +14,25 @@ const CreateFund = () => {
     },
   });
 
+  const [createFundLoading, setCreateFundLoading] = useState(false);
+
   const onFormSubmit = async (values: typeof form.values) => {
-    const references = values.references.split(/\r?\n/);
-    const fundTokenAddress = await createFund(
-      values.name,
-      values.symbolSuffix,
-      references
-    );
-    console.log(
-      "Successfully created fund, fund token address:",
-      fundTokenAddress
-    );
+    setCreateFundLoading(true);
+
+    try {
+      const references = values.references.split(/\r?\n/);
+      const fundTokenAddress = await createFund(
+        values.name,
+        values.symbolSuffix,
+        references
+      );
+      console.log("Created fund with token address", fundTokenAddress);
+      router.push("/funds/" + fundTokenAddress);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setCreateFundLoading(false);
   };
 
   return (
@@ -47,7 +58,9 @@ const CreateFund = () => {
           {...form.getInputProps("references")}
         />
         <Group position="right" mt="md">
-          <Button type="submit">Submit</Button>
+          <Button type="submit" loading={createFundLoading}>
+            Submit
+          </Button>
         </Group>
       </form>
     </Box>

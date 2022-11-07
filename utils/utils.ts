@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { Fund } from "./types";
 
 const getGiftBoxContract = async () => {
   if (!window.tronWeb) throw Error("TronWeb not available");
@@ -10,6 +11,12 @@ const getGiftBoxContract = async () => {
 export const getStableCoinAddress = async () => {
   const giftBoxContract = await getGiftBoxContract();
   return await giftBoxContract.stableCoinAddress().call();
+};
+
+const getStableCoinContract = async () => {
+  if (!window.tronWeb) throw Error("TronWeb not available");
+  const stableCoinAddress = await getStableCoinAddress();
+  return await window.tronWeb.contract().at(stableCoinAddress);
 };
 
 // Create fund and return the fund token address
@@ -41,10 +48,28 @@ export const getFundTokenAddresses = async () => {
   return fundTokenAddresses;
 };
 
-export const getFund = async (fundTokenAddress: string) => {
+export const getFund = async (fundTokenAddress: string): Promise<Fund> => {
   const giftBoxContract = await getGiftBoxContract();
   return {
     fundTokenAddress,
     ...(await giftBoxContract.funds(fundTokenAddress).call()),
   };
+};
+
+export const depositStableCoins = async (
+  fundTokenAddress: string,
+  amount: number
+) => {
+  const giftBoxContract = await getGiftBoxContract();
+  const stableCoinContract = await getStableCoinContract();
+
+  // Approve GiftBox to spend stablecoins from user's wallet
+  await stableCoinContract
+    .approve(giftBoxContract.address, amount)
+    .send({ feeLimit: 500_000_000, shouldPollResponse: true });
+
+  // Deposit stablecoins into fund
+  await giftBoxContract
+    .depositStableCoins(fundTokenAddress, amount)
+    .send({ feeLimit: 500_000_000, shouldPollResponse: true });
 };
