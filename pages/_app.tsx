@@ -1,4 +1,4 @@
-import "../styles/globals.css";
+import { useEffect, useState } from "react";
 import type { AppProps } from "next/app";
 import {
   MantineProvider,
@@ -7,12 +7,13 @@ import {
   Header,
   Group,
   Title,
-  Text,
+  Badge,
 } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import Link from "next/link";
+
 import styles from "./../styles/Home.module.css";
-import { useEffect, useState } from "react";
+import "../styles/globals.css";
 import { WalletContext } from "../utils/context";
 
 function App({ Component, pageProps }: AppProps) {
@@ -21,8 +22,6 @@ function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
       setConnectedWallet(window.tronWeb.defaultAddress.base58);
-    } else {
-      setConnectedWallet(null);
     }
   }, []);
 
@@ -34,7 +33,6 @@ function App({ Component, pageProps }: AppProps) {
         colorScheme: "light",
       }}
     >
-      {" "}
       <NotificationsProvider>
         <AppShell
           padding="md"
@@ -58,7 +56,7 @@ function App({ Component, pageProps }: AppProps) {
               <Group position="apart">
                 <Title order={1}>GiftBox</Title>
                 {connectedWallet ? (
-                  <Text>Logged in as {connectedWallet}</Text>
+                  <Badge size="md">{connectedWallet}</Badge>
                 ) : null}
               </Group>
             </Header>
@@ -73,6 +71,7 @@ function App({ Component, pageProps }: AppProps) {
           })}
         >
           <WalletContext.Provider value={{ connectedWallet }}>
+            {" "}
             <Component {...pageProps} />
           </WalletContext.Provider>
         </AppShell>
