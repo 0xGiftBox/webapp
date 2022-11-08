@@ -8,6 +8,7 @@ import {
   Group,
   Title,
 } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 import Link from "next/link";
 import styles from "./../styles/Home.module.css";
 function App({ Component, pageProps }: AppProps) {
@@ -19,43 +20,46 @@ function App({ Component, pageProps }: AppProps) {
         colorScheme: "light",
       }}
     >
-      <AppShell
-        padding="md"
-        navbar={
-          <Navbar p="md" width={{ sm: 250 }} style={{ width: 250 }}>
-            <Navbar.Section pb={20}>
-              <Link className={styles.nav_link} href="/">
-                Home
-              </Link>
-              <Link className={styles.nav_link} href="/create-fund">
-                Create Fund
-              </Link>
-            </Navbar.Section>
-            <Navbar.Section grow mt="md">
-              {/* */}
-            </Navbar.Section>
-          </Navbar>
-        }
-        header={
-          <Header height={70} p="md">
-            <Group position="apart">
-              <Group>
-                <Title order={1}>Giftbox</Title>
+      {" "}
+      <NotificationsProvider>
+        <AppShell
+          padding="md"
+          navbar={
+            <Navbar p="md" width={{ sm: 250 }} style={{ width: 250 }}>
+              <Navbar.Section pb={20}>
+                <Link className={styles.nav_link} href="/">
+                  Home
+                </Link>
+                <Link className={styles.nav_link} href="/create-fund">
+                  Create Fund
+                </Link>
+              </Navbar.Section>
+              <Navbar.Section grow mt="md">
+                {/* */}
+              </Navbar.Section>
+            </Navbar>
+          }
+          header={
+            <Header height={70} p="md">
+              <Group position="apart">
+                <Group>
+                  <Title order={1}>Giftbox</Title>
+                </Group>
               </Group>
-            </Group>
-          </Header>
-        }
-        styles={(theme) => ({
-          main: {
-            backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[8]
-                : theme.colors.gray[0],
-          },
-        })}
-      >
-        <Component {...pageProps} />
-      </AppShell>
+            </Header>
+          }
+          styles={(theme) => ({
+            main: {
+              backgroundColor:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[8]
+                  : theme.colors.gray[0],
+            },
+          })}
+        >
+          <Component {...pageProps} />
+        </AppShell>
+      </NotificationsProvider>
     </MantineProvider>
   );
 }
