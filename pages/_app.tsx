@@ -9,6 +9,7 @@ import {
   Title,
   Text,
 } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 import Link from "next/link";
 import styles from "./../styles/Home.module.css";
 import { useEffect, useState } from "react";
@@ -33,46 +34,49 @@ function App({ Component, pageProps }: AppProps) {
         colorScheme: "light",
       }}
     >
-      <AppShell
-        padding="md"
-        navbar={
-          <Navbar p="md" width={{ sm: 250 }} style={{ width: 250 }}>
-            <Navbar.Section pb={20}>
-              <Link className={styles.nav_link} href="/">
-                Home
-              </Link>
-              <Link className={styles.nav_link} href="/create-fund">
-                Create Fund
-              </Link>
-            </Navbar.Section>
-            <Navbar.Section grow mt="md">
-              {/* */}
-            </Navbar.Section>
-          </Navbar>
-        }
-        header={
-          <Header height={70} p="md">
-            <Group position="apart">
-              <Title order={1}>GiftBox</Title>
-              {connectedWallet ? (
-                <Text>Logged in as {connectedWallet}</Text>
-              ) : null}
-            </Group>
-          </Header>
-        }
-        styles={(theme) => ({
-          main: {
-            backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[8]
-                : theme.colors.gray[0],
-          },
-        })}
-      >
-        <WalletContext.Provider value={{ connectedWallet }}>
-          <Component {...pageProps} />
-        </WalletContext.Provider>
-      </AppShell>
+      {" "}
+      <NotificationsProvider>
+        <AppShell
+          padding="md"
+          navbar={
+            <Navbar p="md" width={{ sm: 250 }} style={{ width: 250 }}>
+              <Navbar.Section pb={20}>
+                <Link className={styles.nav_link} href="/">
+                  Home
+                </Link>
+                <Link className={styles.nav_link} href="/create-fund">
+                  Create Fund
+                </Link>
+              </Navbar.Section>
+              <Navbar.Section grow mt="md">
+                {/* */}
+              </Navbar.Section>
+            </Navbar>
+          }
+          header={
+            <Header height={70} p="md">
+              <Group position="apart">
+                <Title order={1}>GiftBox</Title>
+                {connectedWallet ? (
+                  <Text>Logged in as {connectedWallet}</Text>
+                ) : null}
+              </Group>
+            </Header>
+          }
+          styles={(theme) => ({
+            main: {
+              backgroundColor:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[8]
+                  : theme.colors.gray[0],
+            },
+          })}
+        >
+          <WalletContext.Provider value={{ connectedWallet }}>
+            <Component {...pageProps} />
+          </WalletContext.Provider>
+        </AppShell>
+      </NotificationsProvider>
     </MantineProvider>
   );
 }

@@ -1,5 +1,7 @@
-import { List, Text, Loader, SimpleGrid } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { List, Text, Loader, SimpleGrid } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
+
 import { Fund } from "../utils/types";
 import { getFund, getFundTokenAddresses } from "../utils/utils";
 import FundCard from "./FundCard";
@@ -7,21 +9,41 @@ import FundCard from "./FundCard";
 export const ListFunds = () => {
   const [loading, isLoading] = useState(false);
   const [funds, setFunds] = useState<Fund[] | null>(null);
+  const [notification, setNotification] = useState("");
 
   useEffect(() => {
     const fetchFunds = async () => {
-      isLoading(true);
-      const fundTokenAddresses = await getFundTokenAddresses();
-      const funds = await Promise.all(
-        fundTokenAddresses.map(async (x) => await getFund(x))
-      );
+      try {
+        isLoading(true);
+        const fundTokenAddresses = await getFundTokenAddresses();
+        const funds = await Promise.all(
+          fundTokenAddresses.map(async (x) => await getFund(x))
+        );
+        // @ts-ignore
+        setFunds(funds);
+      } catch (e) {
+        if (window.tronWeb) {
+          setNotification("Please use shasta testnet.");
+        } else {
+          setNotification("Please install tronlink wallet.");
+        }
+      }
       isLoading(false);
       // @ts-ignore
-      setFunds(funds);
     };
 
     fetchFunds();
   }, []);
+
+  useEffect(() => {
+    if (notification !== "") {
+      showNotification({
+        title: notification,
+        message: "",
+        color: "red",
+      });
+    }
+  }, [notification]);
 
   return loading ? (
     <p>
