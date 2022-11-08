@@ -22,6 +22,7 @@ export default function Home() {
       window.removeEventListener("message", () => {}, false);
     };
   });
+
   useEffect(() => {
     if (notification !== "") {
       showNotification({
@@ -31,6 +32,7 @@ export default function Home() {
       });
     }
   }, [notification]);
+
   return (
     <div className={styles.container}>
       <Head>

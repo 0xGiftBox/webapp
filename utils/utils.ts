@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { Fund } from "./types";
+import { Fund, WithdrawRequest } from "./types";
 
 const getGiftBoxContract = async () => {
   if (!window.tronWeb) throw Error("TronWeb not available");
@@ -104,4 +104,36 @@ export const requestAccounts = () => {
   if (!window.tronWeb) throw Error("TronWeb not available");
   // @ts-ignore
   return window.tronWeb.request({ method: "tron_requestAccounts" });
+};
+
+export const getWithdrawRequests = async (
+  fundTokenAddress: string
+): Promise<WithdrawRequest[]> => {
+  const giftBoxContract = await getGiftBoxContract();
+  const numWithdrawRequestsBn = await giftBoxContract
+    .numWithdrawRequests(fundTokenAddress)
+    .call();
+  const numWithdrawRequests = numWithdrawRequestsBn.toNumber();
+
+  const withdrawRequests = await Promise.all(
+    // Trick for getting array of 1...N @ https://stackoverflow.com/a/3746849/5837426
+    [...Array(numWithdrawRequests).keys()].map(
+      async (x) =>
+        await giftBoxContract
+          .withdrawRequests(fundTokenAddress, ethers.BigNumber.from(x))
+          .call()
+    )
+  );
+
+  // Properly format and type the data
+  return withdrawRequests.map((x) => {
+    return {
+      title: x.title,
+      status: x.status,
+      amount: x.amount,
+      deadline: new Date(x.deadline.toNumber() * 1000),
+      numVotesFor: x.numVotesFor.toNumber(),
+      numVotesAgainst: x.numVotesAgainst.toNumber(),
+    };
+  });
 };
