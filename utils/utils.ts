@@ -48,11 +48,17 @@ export const getFundTokenAddresses = async () => {
   return fundTokenAddresses;
 };
 
-export const getFund = async (fundTokenAddress: string): Promise<Fund> => {
+export const getFund = async (
+  fundTokenAddress: string
+): Promise<Fund | null> => {
   const giftBoxContract = await getGiftBoxContract();
+
+  const fund = await giftBoxContract.funds(fundTokenAddress).call();
+  if (fund.manager == "410000000000000000000000000000000000000000") return null;
+
   return {
     fundTokenAddress,
-    ...(await giftBoxContract.funds(fundTokenAddress).call()),
+    ...fund,
   };
 };
 
@@ -72,4 +78,30 @@ export const depositStableCoins = async (
   await giftBoxContract
     .depositStableCoins(fundTokenAddress, amount)
     .send({ feeLimit: 500_000_000, shouldPollResponse: true });
+};
+
+// Create a withdraw request
+export const createWithdrawRequest = async (
+  fundTokenAddress: string,
+  amount: number,
+  title: string,
+  deadline: Date,
+  references: string[]
+) => {
+  const giftBoxContract = await getGiftBoxContract();
+  return await giftBoxContract
+    .createWithdrawRequest(
+      fundTokenAddress,
+      amount,
+      title,
+      Math.floor(deadline.getTime() / 1000),
+      references
+    )
+    .send({ feeLimit: 500_000_000, shouldPollResponse: true });
+};
+
+export const requestAccounts = () => {
+  if (!window.tronWeb) throw Error("TronWeb not available");
+  // @ts-ignore
+  return window.tronWeb.request({ method: "tron_requestAccounts" });
 };

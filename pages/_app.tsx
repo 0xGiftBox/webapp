@@ -7,10 +7,24 @@ import {
   Header,
   Group,
   Title,
+  Text,
 } from "@mantine/core";
 import Link from "next/link";
 import styles from "./../styles/Home.module.css";
+import { useEffect, useState } from "react";
+import { WalletContext } from "../utils/context";
+
 function App({ Component, pageProps }: AppProps) {
+  const [connectedWallet, setConnectedWallet] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+      setConnectedWallet(window.tronWeb.defaultAddress.base58);
+    } else {
+      setConnectedWallet(null);
+    }
+  }, []);
+
   return (
     <MantineProvider
       withGlobalStyles
@@ -39,9 +53,10 @@ function App({ Component, pageProps }: AppProps) {
         header={
           <Header height={70} p="md">
             <Group position="apart">
-              <Group>
-                <Title order={1}>Giftbox</Title>
-              </Group>
+              <Title order={1}>GiftBox</Title>
+              {connectedWallet ? (
+                <Text>Logged in as {connectedWallet}</Text>
+              ) : null}
             </Group>
           </Header>
         }
@@ -54,7 +69,9 @@ function App({ Component, pageProps }: AppProps) {
           },
         })}
       >
-        <Component {...pageProps} />
+        <WalletContext.Provider value={{ connectedWallet }}>
+          <Component {...pageProps} />
+        </WalletContext.Provider>
       </AppShell>
     </MantineProvider>
   );

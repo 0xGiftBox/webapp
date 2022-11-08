@@ -1,16 +1,4 @@
-import {
-  List,
-  Text,
-  Title,
-  Loader,
-  SimpleGrid,
-  Card,
-  Badge,
-  Button,
-  Group,
-  Tooltip,
-} from "@mantine/core";
-import Link from "next/link";
+import { List, Text, Loader, SimpleGrid } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Fund } from "../utils/types";
 import { getFund, getFundTokenAddresses } from "../utils/utils";
@@ -28,6 +16,7 @@ export const ListFunds = () => {
         fundTokenAddresses.map(async (x) => await getFund(x))
       );
       isLoading(false);
+      // @ts-ignore
       setFunds(funds);
     };
 

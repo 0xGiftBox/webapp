@@ -7,24 +7,28 @@ interface FundCardProps {
 }
 
 const FundCard = ({ fund }: FundCardProps) => {
+  // @ts-ignore
+  const fundManagerAddress = window?.tronWeb?.address.fromHex(fund.manager);
+
   return (
     <Card shadow="sm" p="lg" radius="md" withBorder>
       <Title order={3}>{fund.name}</Title>
       <Group position="apart" mt="md" mb="xs">
         <Text weight={500}>Manager</Text>
-        <a
-          href={`https://shasta.tronscan.org/#/address/${window?.tronWeb?.address.fromHex(
-            fund.manager
-          )}`}
+        <Link
+          href={`https://shasta.tronscan.org/#/address/${fundManagerAddress}`}
           target="_blank"
           rel="noreferrer"
         >
           <Badge color="pink" variant="light">
-            {window?.tronWeb?.address.fromHex(fund.manager).slice(0, 5) +
-              "..." +
-              fund.manager.slice(-5)}
+            {
+              // @ts-ignore
+              fundManagerAddress.slice(0, 5) +
+                "..." +
+                fundManagerAddress.slice(-5)
+            }
           </Badge>
-        </a>
+        </Link>
       </Group>
 
       <Button
