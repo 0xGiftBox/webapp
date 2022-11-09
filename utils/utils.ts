@@ -137,3 +137,52 @@ export const getWithdrawRequests = async (
     };
   });
 };
+
+export const getFundReferences = async (
+  fundTokenAddress: string
+): Promise<string[]> => {
+  const giftBoxContract = await getGiftBoxContract();
+  const numFundReferencesBn = await giftBoxContract
+    .numWithdrawRequests(fundTokenAddress)
+    .call();
+  const numFundReferences = numFundReferencesBn.toNumber();
+
+  return await Promise.all(
+    // Trick for getting array of 1...N @ https://stackoverflow.com/a/3746849/5837426
+    [...Array(numFundReferences).keys()].map(
+      async (x) =>
+        await giftBoxContract
+          .fundReferences(fundTokenAddress, ethers.BigNumber.from(x))
+          .call()
+    )
+  );
+};
+
+export const getWithdrawRequestReferences = async (
+  fundTokenAddress: string,
+  withdrawRequestId: number
+): Promise<string[]> => {
+  const giftBoxContract = await getGiftBoxContract();
+  const numWithdrawRequestReferencesBn = await giftBoxContract
+    .numWithdrawRequestReferences(
+      fundTokenAddress,
+      ethers.BigNumber.from(withdrawRequestId)
+    )
+    .call();
+  const numWithdrawRequestReferences =
+    numWithdrawRequestReferencesBn.toNumber();
+
+  return await Promise.all(
+    // Trick for getting array of 1...N @ https://stackoverflow.com/a/3746849/5837426
+    [...Array(numWithdrawRequestReferences).keys()].map(
+      async (x) =>
+        await giftBoxContract
+          .withdrawRequestReferences(
+            fundTokenAddress,
+            ethers.BigNumber.from(withdrawRequestId),
+            ethers.BigNumber.from(x)
+          )
+          .call()
+    )
+  );
+};
