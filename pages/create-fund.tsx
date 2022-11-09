@@ -1,4 +1,5 @@
-import { TextInput, Button, Group, Box, Textarea } from "@mantine/core";
+import { TextInput, Button, Group, Box, Textarea, Text } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -11,6 +12,10 @@ const CreateFund = () => {
       name: "",
       symbolSuffix: "",
       references: "",
+    },
+    validate: {
+      name: (value) => (value.length < 1 ? "Can not be empty" : null),
+      symbolSuffix: (value) => (value.length < 3 ? "Minimum 3 letters" : null),
     },
   });
 
@@ -36,7 +41,10 @@ const CreateFund = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 300 }} mx="auto">
+    <Box sx={{ maxWidth: 300 }} mx={40}>
+      <Text size="xl" pb={10}>
+        Create a new fund
+      </Text>
       <form onSubmit={form.onSubmit(onFormSubmit)}>
         <TextInput
           withAsterisk
