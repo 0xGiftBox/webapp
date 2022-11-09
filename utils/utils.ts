@@ -143,7 +143,7 @@ export const getFundReferences = async (
 ): Promise<string[]> => {
   const giftBoxContract = await getGiftBoxContract();
   const numFundReferencesBn = await giftBoxContract
-    .numWithdrawRequests(fundTokenAddress)
+    .numFundReferences(fundTokenAddress)
     .call();
   const numFundReferences = numFundReferencesBn.toNumber();
 
