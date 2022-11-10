@@ -16,7 +16,7 @@ export enum WithdrawRequestStatus {
 export type WithdrawRequest = {
   title: string;
   status: WithdrawRequestStatus;
-  amount: ethers.BigNumber;
+  amount: number;
   deadline: Date;
   numVotesFor: number;
   numVotesAgainst: number;
