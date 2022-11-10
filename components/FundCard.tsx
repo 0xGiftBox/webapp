@@ -16,6 +16,7 @@ const FundCard = ({ fund }: FundCardProps) => {
       <Group position="apart" mt="md" mb="xs">
         <Text weight={500}>Manager</Text>
         <Link
+          className="link"
           href={`https://shasta.tronscan.org/#/address/${fundManagerAddress}`}
           target="_blank"
           rel="noreferrer"

@@ -43,7 +43,10 @@ export default function Home() {
       <main className={styles.main}>
         <Title order={1}>Welcome to Giftbox.</Title>
         <p>
-          Get started by <Link href="/create-fund">creating a new fund.</Link>
+          Get started by
+          <Link className="link" href="/create-fund">
+            creating a new fund.
+          </Link>
         </p>
         <ListFunds />
       </main>

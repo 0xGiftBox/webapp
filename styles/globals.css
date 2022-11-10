@@ -5,3 +5,11 @@ body {
     sans-serif;
   margin: 20px;
 }
+
+.link,
+.link:visited,
+.link:hover,
+.link:active {
+  color: blue;
+  text-decoration: none;
+}
