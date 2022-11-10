@@ -107,7 +107,7 @@ const FundPage = () => {
           <Stack>
             <Title order={2}>{fund?.name}</Title>
             <Group>
-              <Title order={6}>{`Manager: `}</Title>
+              <Title order={6}>{`Manager:`}</Title>
               <Text size={"sm"}>
                 <Link
                   className="link"
