@@ -22,6 +22,7 @@ import {
   getFund,
   getFundReferences,
   getWithdrawRequests,
+  voteOnWithdrawRequest,
 } from "../../../utils/utils";
 import { WalletContext } from "../../../utils/context";
 
@@ -59,6 +60,7 @@ const FundPage = () => {
       <td>{element.mass}</td>
     </tr>
   ));
+
   // Fetch fund details
   useEffect(() => {
     const fetchFund = async () => {
@@ -134,6 +136,21 @@ const FundPage = () => {
     };
     fetchWithdrawRequests();
   }, [fundTokenAddress, connectedWallet]);
+
+  const handleVote = async (index: number, vote: boolean) => {
+    if (typeof fundTokenAddress !== "string") return;
+
+    try {
+      const voteTxn = await voteOnWithdrawRequest(
+        fundTokenAddress,
+        index,
+        vote
+      );
+      console.log("Vote Submitted with details", voteTxn);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Show 404 if fund token address is invalid
   if (!isFundTokenAddressValid) return <ErrorPage statusCode={404}></ErrorPage>;
@@ -227,6 +244,8 @@ const FundPage = () => {
                     <th>Votes for</th>
                     <th>Votes against</th>
                     <th>Deadline</th>
+                    <th>Approve</th>
+                    <th>Reject</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -245,6 +264,27 @@ const FundPage = () => {
                       <td>{request.numVotesFor}</td>
                       <td>{request.numVotesAgainst}</td>
                       <td>{request.deadline.toDateString()}</td>
+                      <td>
+                        {
+                          <Button
+                            color={"green"}
+                            onClick={() => handleVote(index, true)}
+                          >
+                            Approve
+                          </Button>
+                        }
+                      </td>
+                      <td>
+                        {
+                          <Button
+                            loading={true}
+                            color={"red"}
+                            onClick={() => handleVote(index, false)}
+                          >
+                            Reject
+                          </Button>
+                        }
+                      </td>
                     </tr>
                   ))}
                 </tbody>
