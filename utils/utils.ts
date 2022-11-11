@@ -100,6 +100,19 @@ export const createWithdrawRequest = async (
     .send({ feeLimit: 500_000_000, shouldPollResponse: true });
 };
 
+//Vote on withdraw request
+
+export const voteOnWithdrawRequest = async (
+  fundTokenAddress: string,
+  index: number,
+  vote: boolean
+) => {
+  const giftBoxContract = await getGiftBoxContract();
+  return await giftBoxContract
+    .voteOnWithdrawRequest(fundTokenAddress, index, vote)
+    .send({ feeLimit: 500_000_000, shouldPollResponse: true });
+};
+
 export const requestAccounts = () => {
   if (!window.tronWeb) throw Error("TronWeb not available");
   // @ts-ignore
