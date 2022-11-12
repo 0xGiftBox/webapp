@@ -100,16 +100,15 @@ export const createWithdrawRequest = async (
     .send({ feeLimit: 500_000_000, shouldPollResponse: true });
 };
 
-//Vote on withdraw request
-
+// Vote on withdraw request
 export const voteOnWithdrawRequest = async (
   fundTokenAddress: string,
-  index: number,
+  withdrawRequestId: number,
   vote: boolean
 ) => {
   const giftBoxContract = await getGiftBoxContract();
   return await giftBoxContract
-    .voteOnWithdrawRequest(fundTokenAddress, index, vote)
+    .voteOnWithdrawRequest(fundTokenAddress, withdrawRequestId, vote)
     .send({ feeLimit: 500_000_000, shouldPollResponse: true });
 };
 
