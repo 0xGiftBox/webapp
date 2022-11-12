@@ -5,6 +5,7 @@ export type Fund = {
   isOpen: boolean;
   name: string;
   manager: string;
+  amountDeposited: number;
 };
 
 export enum WithdrawRequestStatus {

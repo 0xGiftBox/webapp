@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { Fund, WithdrawRequest } from "./types";
+import IERC20 from "@openzeppelin/contracts/build/contracts/IERC20.json";
 
 const getGiftBoxContract = async () => {
   if (!window.tronWeb) throw Error("TronWeb not available");
@@ -59,6 +60,7 @@ export const getFund = async (
   return {
     fundTokenAddress,
     ...fund,
+    amountDeposited: fund.amountDeposited.div(BigInt(10 ** 18)).toNumber(),
   };
 };
 
@@ -70,13 +72,19 @@ export const depositStableCoins = async (
   const stableCoinContract = await getStableCoinContract();
 
   // Approve GiftBox to spend stablecoins from user's wallet
-  await stableCoinContract
-    .approve(giftBoxContract.address, amount * 10 ** 18)
-    .send({ feeLimit: 500_000_000, shouldPollResponse: true });
+  const allowanceBn = await stableCoinContract
+    .allowance(window.tronWeb?.defaultAddress.hex, giftBoxContract.address)
+    .call();
+  const allowance = allowanceBn.div(BigInt(10 ** 18)).toNumber();
+  if (allowance < amount) {
+    await stableCoinContract
+      .approve(giftBoxContract.address, BigInt((amount - allowance) * 10 ** 18))
+      .send({ feeLimit: 500_000_000, shouldPollResponse: true });
+  }
 
   // Deposit stablecoins into fund
   await giftBoxContract
-    .depositStableCoins(fundTokenAddress, amount * 10 ** 18)
+    .depositStableCoins(fundTokenAddress, BigInt(amount * 10 ** 18))
     .send({ feeLimit: 500_000_000, shouldPollResponse: true });
 };
 
@@ -92,7 +100,7 @@ export const createWithdrawRequest = async (
   return await giftBoxContract
     .createWithdrawRequest(
       fundTokenAddress,
-      amount * 10 ** 18,
+      BigInt(amount * 10 ** 18),
       title,
       Math.floor(deadline.getTime() / 1000),
       references
@@ -130,7 +138,7 @@ export const getWithdrawRequests = async (
     return {
       title: x.title,
       status: x.status,
-      amount: x.amount.toNumber() / 10 ** 18,
+      amount: x.amount.div(BigInt(10 ** 18)).toNumber(),
       deadline: new Date(x.deadline.toNumber() * 1000),
       numVotesFor: x.numVotesFor.toNumber(),
       numVotesAgainst: x.numVotesAgainst.toNumber(),
@@ -185,4 +193,24 @@ export const getWithdrawRequestReferences = async (
           .call()
     )
   );
+};
+
+export const executeWithdrawRequest = async (
+  fundTokenAddress: string,
+  withdrawRequestId: number
+) => {
+  const giftBoxContract = await getGiftBoxContract();
+  return await giftBoxContract
+    .executeWithdrawRequest(fundTokenAddress, withdrawRequestId)
+    .send({ feeLimit: 500_000_000, shouldPollResponse: true });
+};
+
+export const getFundTokenSupply = async (fundTokenAddress: string) => {
+  if (!window.tronWeb) throw Error("TronWeb not available");
+  const fundTokenContract = await window.tronWeb.contract(
+    IERC20.abi,
+    fundTokenAddress
+  );
+  const supplyBn = await fundTokenContract.totalSupply().call();
+  return supplyBn.div(BigInt(10 ** 18)).toNumber();
 };
