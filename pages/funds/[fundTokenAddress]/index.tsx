@@ -170,7 +170,7 @@ const FundPage = () => {
     <div>
       <LoadingOverlay visible={!fund || !withdrawRequests} overlayBlur={0} />
 
-      <Card shadow="sm" p="lg" radius="md" mr={"30vw"} mb={20} withBorder>
+      <Card shadow="sm" p="lg" radius="md" mr={"20vw"} mb={20} withBorder>
         <Group position="apart" mt="md" mb="xs">
           <Stack>
             <Title order={2}>{fund?.name}</Title>
@@ -241,7 +241,7 @@ const FundPage = () => {
         ) : null}
       </Card>
 
-      <Card shadow="sm" p="lg" radius="md" mr={"30vw"} withBorder>
+      <Card shadow="sm" p="lg" radius="md" mr={"20vw"} mb={20} withBorder>
         <Group position="apart" mt="md" mb="xs">
           <Stack>
             <Title order={5}>{`Withdrawl requests`}</Title>

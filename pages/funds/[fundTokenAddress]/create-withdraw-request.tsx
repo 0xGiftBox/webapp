@@ -1,10 +1,12 @@
 import {
   TextInput,
+  Text,
   Button,
   Group,
   Box,
   Textarea,
   NumberInput,
+  Card,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { DatePicker } from "@mantine/dates";
@@ -51,43 +53,48 @@ const CreateWithdrawRequest = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 300 }} mx="auto">
-      <form onSubmit={form.onSubmit(onFormSubmit)}>
-        <TextInput
-          withAsterisk
-          label="Title"
-          placeholder="Describe your withdraw request"
-          {...form.getInputProps("title")}
-        />
-        <NumberInput
-          label="Donation amount"
-          {...form.getInputProps("amount")}
-          min={1}
-          precision={2}
-          stepHoldDelay={500}
-          stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
-          icon={<IconCurrencyDollar size={18} />}
-        />
-        <DatePicker
-          placeholder="Pick deadline for voting to end"
-          label="Deadline for voting"
-          minDate={new Date()}
-          {...form.getInputProps("deadline")}
-        />
-        <Textarea
-          autosize
-          minRows={2}
-          label="References"
-          placeholder="Links to references"
-          {...form.getInputProps("references")}
-        />
-        <Group position="right" mt="md">
-          <Button type="submit" loading={loading}>
-            Submit
-          </Button>
-        </Group>
-      </form>
-    </Box>
+    <Card shadow="sm" p="lg" radius="md" mr={"20vw"} mb={20} withBorder>
+      <Box sx={{ maxWidth: "auto" }} mx={40}>
+        <Text size="xl" pb={10}>
+          Create a new withdraw request
+        </Text>
+        <form onSubmit={form.onSubmit(onFormSubmit)}>
+          <TextInput
+            withAsterisk
+            label="Title"
+            placeholder="Describe your withdraw request"
+            {...form.getInputProps("title")}
+          />
+          <NumberInput
+            label="Donation amount"
+            {...form.getInputProps("amount")}
+            min={1}
+            precision={2}
+            stepHoldDelay={500}
+            stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
+            icon={<IconCurrencyDollar size={18} />}
+          />
+          <DatePicker
+            placeholder="Pick deadline for voting to end"
+            label="Deadline for voting"
+            minDate={new Date()}
+            {...form.getInputProps("deadline")}
+          />
+          <Textarea
+            autosize
+            minRows={2}
+            label="References"
+            placeholder="Links to references"
+            {...form.getInputProps("references")}
+          />
+          <Group position="right" mt="md">
+            <Button type="submit" loading={loading}>
+              Submit
+            </Button>
+          </Group>
+        </form>
+      </Box>
+    </Card>
   );
 };
 

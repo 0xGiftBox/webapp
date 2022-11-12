@@ -71,7 +71,6 @@ function App({ Component, pageProps }: AppProps) {
           })}
         >
           <WalletContext.Provider value={{ connectedWallet }}>
-            {" "}
             <Component {...pageProps} />
           </WalletContext.Provider>
         </AppShell>

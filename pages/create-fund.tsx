@@ -1,4 +1,12 @@
-import { TextInput, Button, Group, Box, Textarea, Text } from "@mantine/core";
+import {
+  TextInput,
+  Button,
+  Group,
+  Box,
+  Textarea,
+  Text,
+  Card,
+} from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
@@ -41,37 +49,39 @@ const CreateFund = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 300 }} mx={40}>
-      <Text size="xl" pb={10}>
-        Create a new fund
-      </Text>
-      <form onSubmit={form.onSubmit(onFormSubmit)}>
-        <TextInput
-          withAsterisk
-          label="Name"
-          placeholder="Name of the fund"
-          {...form.getInputProps("name")}
-        />
-        <TextInput
-          withAsterisk
-          label="Fundcoin symbol"
-          placeholder="3-5 letter identifier for your fund"
-          {...form.getInputProps("symbolSuffix")}
-        />
-        <Textarea
-          autosize
-          minRows={2}
-          label="References"
-          placeholder="Links to references"
-          {...form.getInputProps("references")}
-        />
-        <Group position="right" mt="md">
-          <Button type="submit" loading={createFundLoading}>
-            Submit
-          </Button>
-        </Group>
-      </form>
-    </Box>
+    <Card shadow="sm" p="lg" radius="md" mr={"20vw"} mb={20} withBorder>
+      <Box sx={{ maxWidth: "auto" }} mx={40}>
+        <Text size="xl" pb={10}>
+          Create a new fund
+        </Text>
+        <form onSubmit={form.onSubmit(onFormSubmit)}>
+          <TextInput
+            withAsterisk
+            label="Name"
+            placeholder="Name of the fund"
+            {...form.getInputProps("name")}
+          />
+          <TextInput
+            withAsterisk
+            label="Fundcoin symbol"
+            placeholder="3-5 letter identifier for your fund"
+            {...form.getInputProps("symbolSuffix")}
+          />
+          <Textarea
+            autosize
+            minRows={2}
+            label="References"
+            placeholder="Links to references"
+            {...form.getInputProps("references")}
+          />
+          <Group position="right" mt="md">
+            <Button type="submit" loading={createFundLoading}>
+              Submit
+            </Button>
+          </Group>
+        </form>
+      </Box>
+    </Card>
   );
 };
 
