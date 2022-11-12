@@ -71,12 +71,12 @@ export const depositStableCoins = async (
 
   // Approve GiftBox to spend stablecoins from user's wallet
   await stableCoinContract
-    .approve(giftBoxContract.address, amount)
+    .approve(giftBoxContract.address, amount * 10 ** 18)
     .send({ feeLimit: 500_000_000, shouldPollResponse: true });
 
   // Deposit stablecoins into fund
   await giftBoxContract
-    .depositStableCoins(fundTokenAddress, amount)
+    .depositStableCoins(fundTokenAddress, amount * 10 ** 18)
     .send({ feeLimit: 500_000_000, shouldPollResponse: true });
 };
 
@@ -92,7 +92,7 @@ export const createWithdrawRequest = async (
   return await giftBoxContract
     .createWithdrawRequest(
       fundTokenAddress,
-      amount,
+      amount * 10 ** 18,
       title,
       Math.floor(deadline.getTime() / 1000),
       references
@@ -130,7 +130,7 @@ export const getWithdrawRequests = async (
     return {
       title: x.title,
       status: x.status,
-      amount: x.amount.toNumber(),
+      amount: x.amount.toNumber() / 10 ** 18,
       deadline: new Date(x.deadline.toNumber() * 1000),
       numVotesFor: x.numVotesFor.toNumber(),
       numVotesAgainst: x.numVotesAgainst.toNumber(),
