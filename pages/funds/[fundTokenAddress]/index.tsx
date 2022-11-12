@@ -38,6 +38,8 @@ const FundPage = () => {
   const [isFundTokenAddressValid, setIsFundTokenAddressValid] = useState(true);
   const [amountToDeposit, setAmountToDeposit] = useState(10);
   const [depositLoading, setDepositLoading] = useState(false);
+  const [approveVoteLoading, setApproveVoteLoading] = useState(false);
+  const [rejectVoteLoading, setRejectVoteLoading] = useState(false);
   const [isFundManager, setIsFundManager] = useState(false);
   const [fundManagerAddress, setFundManagerAddress] = useState("");
   const [withdrawRequests, setWithdrawRequests] = useState<
@@ -120,7 +122,13 @@ const FundPage = () => {
     fetchWithdrawRequests();
   }, [fundTokenAddress, connectedWallet]);
 
+  //Handle button onclick for vote approval or rejection
   const handleVote = async (index: number, vote: boolean) => {
+    if (vote) {
+      setApproveVoteLoading(true);
+    } else {
+      setRejectVoteLoading(true);
+    }
     if (typeof fundTokenAddress !== "string") return;
 
     try {
@@ -133,6 +141,8 @@ const FundPage = () => {
     } catch (error) {
       console.log(error);
     }
+    setApproveVoteLoading(false);
+    setRejectVoteLoading(false);
   };
 
   // Show 404 if fund token address is invalid
@@ -250,6 +260,7 @@ const FundPage = () => {
                       <td>
                         {
                           <Button
+                            loading={approveVoteLoading}
                             color={"green"}
                             onClick={() => handleVote(index, true)}
                           >
@@ -260,7 +271,7 @@ const FundPage = () => {
                       <td>
                         {
                           <Button
-                            loading={true}
+                            loading={rejectVoteLoading}
                             color={"red"}
                             onClick={() => handleVote(index, false)}
                           >
