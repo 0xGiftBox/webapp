@@ -191,10 +191,11 @@ const FundPage = () => {
           </Stack>
           <Stack>
             <Badge color="green" variant="light">
-              Total Donation: $100
+              Total Donation: {fund?.amountDeposited}
             </Badge>
             <Badge color="pink" variant="light">
-              Total Withdrawl: $50
+              Total Withdrawl:
+              {fund ? fund.amountDeposited - fund.balance : null}
             </Badge>
           </Stack>
         </Group>
