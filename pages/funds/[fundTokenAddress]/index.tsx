@@ -168,7 +168,7 @@ const FundPage = () => {
 
   return (
     <div>
-      <LoadingOverlay visible={!fund} overlayBlur={2} />
+      <LoadingOverlay visible={!fund || !withdrawRequests} overlayBlur={0} />
 
       <Card shadow="sm" p="lg" radius="md" mr={"30vw"} mb={20} withBorder>
         <Group position="apart" mt="md" mb="xs">
