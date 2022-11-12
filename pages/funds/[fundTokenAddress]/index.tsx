@@ -76,6 +76,7 @@ const FundPage = () => {
           // @ts-ignore
           connectedWallet == window?.tronWeb?.address.fromHex(fund.manager)
         );
+        // @ts-ignore
         setFundManagerAddress(window?.tronWeb?.address.fromHex(fund.manager));
       } catch (error) {
         setIsFundTokenAddressValid(false);
