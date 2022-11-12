@@ -6,6 +6,7 @@ export type Fund = {
   name: string;
   manager: string;
   amountDeposited: number;
+  balance: number;
 };
 
 export enum WithdrawRequestStatus {

@@ -59,8 +59,11 @@ export const getFund = async (
 
   return {
     fundTokenAddress,
-    ...fund,
+    isOpen: fund.isOpen,
+    name: fund.name,
+    manager: fund.manager,
     amountDeposited: fund.amountDeposited.div(BigInt(10 ** 18)).toNumber(),
+    balance: fund.balance.div(BigInt(10 ** 18)).toNumber(),
   };
 };
 
