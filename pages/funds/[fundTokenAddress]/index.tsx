@@ -19,6 +19,7 @@ import Link from "next/link";
 import { Fund, WithdrawRequest } from "../../../utils/types";
 import {
   depositStableCoins,
+  executeWithdrawRequest,
   getFund,
   getFundReferences,
   getWithdrawRequests,
@@ -40,6 +41,7 @@ const FundPage = () => {
   const [depositLoading, setDepositLoading] = useState(false);
   const [approveVoteLoading, setApproveVoteLoading] = useState(false);
   const [rejectVoteLoading, setRejectVoteLoading] = useState(false);
+  const [executeLoading, setExecuteLoading] = useState(false);
   const [isFundManager, setIsFundManager] = useState(false);
   const [fundManagerAddress, setFundManagerAddress] = useState("");
   const [withdrawRequests, setWithdrawRequests] = useState<
@@ -146,6 +148,21 @@ const FundPage = () => {
     setRejectVoteLoading(false);
   };
 
+  //Handle button onclick for executing withdraw requests
+  const handleExecute = async (index: number) => {
+    setExecuteLoading(true);
+
+    if (typeof fundTokenAddress !== "string") return;
+
+    try {
+      const executeTxn = await executeWithdrawRequest(fundTokenAddress, index);
+      console.log("Withdraw request executed", executeTxn);
+    } catch (error) {
+      console.log(error);
+    }
+    setExecuteLoading(false);
+  };
+
   // Show 404 if fund token address is invalid
   if (!isFundTokenAddressValid) return <ErrorPage statusCode={404}></ErrorPage>;
 
@@ -240,6 +257,7 @@ const FundPage = () => {
                     <th>Deadline</th>
                     <th>Approve</th>
                     <th>Reject</th>
+                    <th hidden={!isFundManager}>Execute</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -277,6 +295,18 @@ const FundPage = () => {
                             onClick={() => handleVote(index, false)}
                           >
                             Reject
+                          </Button>
+                        }
+                      </td>
+                      <td>
+                        {
+                          <Button
+                            hidden={!isFundManager}
+                            loading={executeLoading}
+                            color={"blue"}
+                            onClick={() => handleExecute(index)}
+                          >
+                            Execute
                           </Button>
                         }
                       </td>
