@@ -22,6 +22,7 @@ import {
   getFund,
   getFundReferences,
   getWithdrawRequests,
+  voteOnWithdrawRequest,
 } from "../../../utils/utils";
 import { WalletContext } from "../../../utils/context";
 
@@ -37,28 +38,14 @@ const FundPage = () => {
   const [isFundTokenAddressValid, setIsFundTokenAddressValid] = useState(true);
   const [amountToDeposit, setAmountToDeposit] = useState(10);
   const [depositLoading, setDepositLoading] = useState(false);
+  const [approveVoteLoading, setApproveVoteLoading] = useState(false);
+  const [rejectVoteLoading, setRejectVoteLoading] = useState(false);
   const [isFundManager, setIsFundManager] = useState(false);
   const [fundManagerAddress, setFundManagerAddress] = useState("");
   const [withdrawRequests, setWithdrawRequests] = useState<
     WithdrawRequest[] | null
   >(null);
 
-  // const [rows, setRows] = useState<ReactElement[]>();
-  const elements = [
-    { position: 6, mass: 12.011, symbol: "C", name: "Carbon" },
-    { position: 7, mass: 14.007, symbol: "N", name: "Nitrogen" },
-    { position: 39, mass: 88.906, symbol: "Y", name: "Yttrium" },
-    { position: 56, mass: 137.33, symbol: "Ba", name: "Barium" },
-    { position: 58, mass: 140.12, symbol: "Ce", name: "Cerium" },
-  ];
-  const rows = elements.map((element) => (
-    <tr key={element.name}>
-      <td>{element.position}</td>
-      <td>{element.name}</td>
-      <td>{element.symbol}</td>
-      <td>{element.mass}</td>
-    </tr>
-  ));
   // Fetch fund details
   useEffect(() => {
     const fetchFund = async () => {
@@ -135,6 +122,29 @@ const FundPage = () => {
     };
     fetchWithdrawRequests();
   }, [fundTokenAddress, connectedWallet]);
+
+  //Handle button onclick for vote approval or rejection
+  const handleVote = async (index: number, vote: boolean) => {
+    if (vote) {
+      setApproveVoteLoading(true);
+    } else {
+      setRejectVoteLoading(true);
+    }
+    if (typeof fundTokenAddress !== "string") return;
+
+    try {
+      const voteTxn = await voteOnWithdrawRequest(
+        fundTokenAddress,
+        index,
+        vote
+      );
+      console.log("Vote Submitted with details", voteTxn);
+    } catch (error) {
+      console.log(error);
+    }
+    setApproveVoteLoading(false);
+    setRejectVoteLoading(false);
+  };
 
   // Show 404 if fund token address is invalid
   if (!isFundTokenAddressValid) return <ErrorPage statusCode={404}></ErrorPage>;
@@ -228,6 +238,8 @@ const FundPage = () => {
                     <th>Votes for</th>
                     <th>Votes against</th>
                     <th>Deadline</th>
+                    <th>Approve</th>
+                    <th>Reject</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -246,6 +258,28 @@ const FundPage = () => {
                       <td>{request.numVotesFor}</td>
                       <td>{request.numVotesAgainst}</td>
                       <td>{request.deadline.toDateString()}</td>
+                      <td>
+                        {
+                          <Button
+                            loading={approveVoteLoading}
+                            color={"green"}
+                            onClick={() => handleVote(index, true)}
+                          >
+                            Approve
+                          </Button>
+                        }
+                      </td>
+                      <td>
+                        {
+                          <Button
+                            loading={rejectVoteLoading}
+                            color={"red"}
+                            onClick={() => handleVote(index, false)}
+                          >
+                            Reject
+                          </Button>
+                        }
+                      </td>
                     </tr>
                   ))}
                 </tbody>
