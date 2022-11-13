@@ -20,6 +20,11 @@ const getStableCoinContract = async () => {
   return await window.tronWeb.contract().at(stableCoinAddress);
 };
 
+const getFundTokenContract = async (fundTokenAddress: string) => {
+  if (!window.tronWeb) throw Error("TronWeb not available");
+  return await window.tronWeb.contract(IERC20.abi, fundTokenAddress);
+};
+
 // Create fund and return the fund token address
 export const createFund = async (
   name: string,
@@ -221,11 +226,16 @@ export const executeWithdrawRequest = async (
 };
 
 export const getFundTokenSupply = async (fundTokenAddress: string) => {
-  if (!window.tronWeb) throw Error("TronWeb not available");
-  const fundTokenContract = await window.tronWeb.contract(
-    IERC20.abi,
-    fundTokenAddress
-  );
+  const fundTokenContract = await getFundTokenContract(fundTokenAddress);
   const supplyBn = await fundTokenContract.totalSupply().call();
   return supplyBn.div(BigInt(10 ** 18)).toNumber();
+};
+
+export const getFundTokenBalance = async (
+  fundTokenAddress: string,
+  user: string
+) => {
+  const fundTokenContract = await getFundTokenContract(fundTokenAddress);
+  const balanceBn = await fundTokenContract.balanceOf(user).call();
+  return balanceBn.div(BigInt(10 ** 18)).toNumber();
 };
