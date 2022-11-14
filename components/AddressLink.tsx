@@ -5,6 +5,7 @@ const AddressLink = (props: { address: string }) => {
   const address = props.address;
 
   const getFormattedAddress = () => {
+    // @ts-ignore
     return window?.tronWeb?.address.fromHex(address);
   };
   return (

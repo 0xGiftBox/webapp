@@ -55,6 +55,7 @@ const ProfilePage = () => {
       try {
         const filteredFunds = funds?.filter(
           (fund) =>
+            // @ts-ignore
             window?.tronWeb?.address.fromHex(fund.manager) === connectedWallet
         );
         setFundsCreatedByYou(filteredFunds);
