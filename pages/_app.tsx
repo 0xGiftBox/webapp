@@ -66,18 +66,18 @@ function App({ Component, pageProps }: AppProps) {
           navbar={
             <Navbar p="md" width={{ sm: 250 }} style={{ width: 250 }}>
               <Navbar.Section pb={20}>
-                <Link className={styles.nav_link} href="/">
+                <Link className={styles.navLink} href="/">
                   Home
                 </Link>
-                <Link className={styles.nav_link} href="/create-fund">
+                <Link className={styles.navLink} href="/create-fund">
                   Create Fund
                 </Link>
               </Navbar.Section>
               <Navbar.Section grow mt="md">
-                <Link className={styles.nav_link} href="/funds-you-created">
+                <Link className={styles.navLink} href="/funds-you-created">
                   Funds you created
                 </Link>
-                <Link className={styles.nav_link} href="/funds-you-donated-to">
+                <Link className={styles.navLink} href="/funds-you-donated-to">
                   Funds you donated to
                 </Link>
               </Navbar.Section>
@@ -88,7 +88,7 @@ function App({ Component, pageProps }: AppProps) {
               <Group position="apart">
                 <Title order={1}>GiftBox</Title>
                 {connectedWallet ? (
-                  <Badge size="md">{connectedWallet}</Badge>
+                  <Badge size="lg">{connectedWallet}</Badge>
                 ) : null}
               </Group>
             </Header>

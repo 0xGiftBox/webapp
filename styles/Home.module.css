@@ -2,7 +2,7 @@
   padding: 0 2rem;
 }
 
-.nav_link {
+.navLink {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,7 +13,7 @@
   padding: 10px 0;
 }
 
-.nav_link:hover {
+.navLink:hover {
   background-color: rgba(15, 20, 25, 0.1);
   border-radius: 15px;
 }
