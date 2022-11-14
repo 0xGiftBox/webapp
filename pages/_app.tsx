@@ -72,14 +72,15 @@ function App({ Component, pageProps }: AppProps) {
                 <Link className={styles.navLink} href="/create-fund">
                   Create Fund
                 </Link>
-              </Navbar.Section>
-              <Navbar.Section grow mt="md">
                 <Link className={styles.navLink} href="/funds-you-created">
                   Funds you created
                 </Link>
                 <Link className={styles.navLink} href="/funds-you-donated-to">
                   Funds you donated to
                 </Link>
+              </Navbar.Section>
+              <Navbar.Section grow mt="md">
+                {}
               </Navbar.Section>
             </Navbar>
           }
