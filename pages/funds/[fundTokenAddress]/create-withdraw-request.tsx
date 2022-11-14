@@ -12,9 +12,8 @@ import { useForm } from "@mantine/form";
 import { DatePicker } from "@mantine/dates";
 import { IconCurrencyDollar } from "@tabler/icons";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { createWithdrawRequest } from "../../../utils/utils";
-import { WalletContext } from "../../../utils/context";
 
 const CreateWithdrawRequest = () => {
   const router = useRouter();

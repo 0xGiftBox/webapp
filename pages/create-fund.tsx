@@ -7,7 +7,6 @@ import {
   Text,
   Card,
 } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useState } from "react";

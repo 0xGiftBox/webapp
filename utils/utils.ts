@@ -38,7 +38,7 @@ export const createFund = async (
 };
 
 // Get all the fund token addresses
-export const getFundTokenAddresses = async () => {
+export const getFundTokenAddresses = async (): Promise<string[]> => {
   const giftBoxContract = await getGiftBoxContract();
   const numFundsBn = await giftBoxContract.numFunds().call();
   const numFunds = numFundsBn.toNumber();

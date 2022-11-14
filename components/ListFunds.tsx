@@ -6,7 +6,11 @@ import { Fund } from "../utils/types";
 import { getFund, getFundTokenAddresses } from "../utils/utils";
 import FundCard from "./FundCard";
 
-export const ListFunds = () => {
+export type ListFundsProps = {
+  filterFunction?: (arg0: Fund) => Promise<boolean>;
+};
+
+export const ListFunds = ({ filterFunction }: ListFundsProps) => {
   const [loading, isLoading] = useState(false);
   const [funds, setFunds] = useState<Fund[] | null>(null);
   const [notification, setNotification] = useState("");
@@ -19,8 +23,12 @@ export const ListFunds = () => {
         const funds = await Promise.all(
           fundTokenAddresses.map(async (x) => await getFund(x))
         );
-        // @ts-ignore
-        setFunds(funds);
+        const nonNullFunds = funds.flatMap((x) => (!!x ? [x] : []));
+        const filterBooleans: boolean[] = filterFunction
+          ? await Promise.all(nonNullFunds.map(filterFunction))
+          : new Array(nonNullFunds.length).fill(true);
+        const filteredFunds = nonNullFunds.filter((_, i) => filterBooleans[i]);
+        setFunds(filteredFunds);
       } catch (e) {
         if (window.tronWeb) {
           setNotification("Please use shasta testnet.");
@@ -33,7 +41,7 @@ export const ListFunds = () => {
     };
 
     fetchFunds();
-  }, []);
+  }, [filterFunction]);
 
   useEffect(() => {
     if (notification !== "") {
@@ -50,7 +58,7 @@ export const ListFunds = () => {
       {`Please wait `}
       <Loader variant="dots" />
     </p>
-  ) : funds ? (
+  ) : funds?.length ? (
     <List>
       <SimpleGrid cols={3}>
         {funds.map((fund, index) => (
@@ -61,6 +69,6 @@ export const ListFunds = () => {
       </SimpleGrid>
     </List>
   ) : (
-    <Text>no funds available</Text>
+    <Text>No funds available</Text>
   );
 };
