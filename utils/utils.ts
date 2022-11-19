@@ -1,12 +1,11 @@
 import { ethers } from "ethers";
 import { Fund, WithdrawRequest } from "./types";
 import IERC20 from "@openzeppelin/contracts/build/contracts/IERC20.json";
+import tronWeb from "./tronweb";
 
 const getGiftBoxContract = async () => {
-  if (!window.tronWeb) throw Error("TronWeb not available");
-  return await window.tronWeb
-    .contract()
-    .at(process.env.NEXT_PUBLIC_GIFTBOX_ADDRESS);
+  if (!tronWeb) throw Error("TronWeb not available");
+  return await tronWeb.contract().at(process.env.NEXT_PUBLIC_GIFTBOX_ADDRESS);
 };
 
 export const getStableCoinAddress = async () => {
@@ -15,14 +14,14 @@ export const getStableCoinAddress = async () => {
 };
 
 const getStableCoinContract = async () => {
-  if (!window.tronWeb) throw Error("TronWeb not available");
+  if (!tronWeb) throw Error("TronWeb not available");
   const stableCoinAddress = await getStableCoinAddress();
-  return await window.tronWeb.contract().at(stableCoinAddress);
+  return await tronWeb.contract().at(stableCoinAddress);
 };
 
 const getFundTokenContract = async (fundTokenAddress: string) => {
-  if (!window.tronWeb) throw Error("TronWeb not available");
-  return await window.tronWeb.contract(IERC20.abi, fundTokenAddress);
+  if (!tronWeb) throw Error("TronWeb not available");
+  return await tronWeb.contract(IERC20.abi, fundTokenAddress);
 };
 
 // Create fund and return the fund token address
@@ -81,7 +80,7 @@ export const depositStableCoins = async (
 
   // Approve GiftBox to spend stablecoins from user's wallet
   const allowanceBn = await stableCoinContract
-    .allowance(window.tronWeb?.defaultAddress.hex, giftBoxContract.address)
+    .allowance(tronWeb?.defaultAddress.hex, giftBoxContract.address)
     .call();
   const allowance = allowanceBn.div(BigInt(10 ** 18)).toNumber();
   if (allowance < amount) {
@@ -129,9 +128,9 @@ export const voteOnWithdrawRequest = async (
 };
 
 export const requestAccounts = () => {
-  if (!window.tronWeb) throw Error("TronWeb not available");
+  if (!tronWeb) throw Error("TronWeb not available");
   // @ts-ignore
-  return window.tronWeb.request({ method: "tron_requestAccounts" });
+  return tronWeb.request({ method: "tron_requestAccounts" });
 };
 
 export const getWithdrawRequests = async (
