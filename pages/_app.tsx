@@ -48,7 +48,11 @@ function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     function getTronweb() {
+      let i = 0;
       var obj = setInterval(async () => {
+        setTimeout(() => {
+          clearInterval(obj);
+        }, 1000);
         if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
           clearInterval(obj);
           // @ts-ignore
