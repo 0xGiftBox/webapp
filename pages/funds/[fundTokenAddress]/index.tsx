@@ -26,6 +26,7 @@ import {
   voteOnWithdrawRequest,
 } from "../../../utils/utils";
 import { WalletContext } from "../../../utils/context";
+import getTronWeb from "../../../utils/tronweb";
 
 const FundPage = () => {
   const router = useRouter();
@@ -51,6 +52,7 @@ const FundPage = () => {
   // Fetch fund details
   useEffect(() => {
     const fetchFund = async () => {
+      let tronWeb = getTronWeb();
       if (typeof fundTokenAddress !== "string") return;
 
       try {
@@ -63,10 +65,11 @@ const FundPage = () => {
         setFund(fund);
         setIsFundManager(
           // @ts-ignore
-          connectedWallet == window?.tronWeb?.address.fromHex(fund.manager)
+          connectedWallet == tronWeb?.address.fromHex(fund.manager)
         );
         // @ts-ignore
-        setFundManagerAddress(window?.tronWeb?.address.fromHex(fund.manager));
+
+        setFundManagerAddress(tronWeb?.address.fromHex(fund.manager));
       } catch (error) {
         setIsFundTokenAddressValid(false);
       }

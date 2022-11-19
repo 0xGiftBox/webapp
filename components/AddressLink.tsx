@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Badge } from "@mantine/core";
+import getTronWeb from "../utils/tronweb";
 
 const AddressLink = (props: { address: string }) => {
   const address = props.address;
 
   const getFormattedAddress = () => {
+    const tronWeb = getTronWeb();
     // @ts-ignore
-    return window?.tronWeb?.address.fromHex(address);
+    return tronWeb?.address.fromHex(address);
   };
   return (
     <Link

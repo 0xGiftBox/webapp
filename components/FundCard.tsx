@@ -1,6 +1,7 @@
 import { Text, Title, Card, Badge, Button, Group } from "@mantine/core";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import getTronWeb from "../utils/tronweb";
 
 import { Fund } from "../utils/types";
 interface FundCardProps {
@@ -9,11 +10,14 @@ interface FundCardProps {
 
 const FundCard = ({ fund }: FundCardProps) => {
   // @ts-ignore
-  const [fundManagerAddress, setFundManagerAddress] = useState("");
+  const [fundManagerAddress, setFundManagerAddress] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     // @ts-ignore
-    setFundManagerAddress(window?.tronWeb?.address.fromHex(fund.manager));
+    let tronWeb = getTronWeb();
+    setFundManagerAddress(tronWeb?.address.fromHex(fund.manager));
   }, [fund]);
 
   return (
@@ -30,9 +34,11 @@ const FundCard = ({ fund }: FundCardProps) => {
           <Badge color="pink" variant="light">
             {
               // @ts-ignore
-              fundManagerAddress.slice(0, 5) +
-                "..." +
-                fundManagerAddress.slice(-5)
+              fundManagerAddress
+                ? fundManagerAddress.slice(0, 5) +
+                  "..." +
+                  fundManagerAddress.slice(-5)
+                : null
             }
           </Badge>
         </Link>
