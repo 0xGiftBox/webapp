@@ -47,9 +47,16 @@ function App({ Component, pageProps }: AppProps) {
   }, [notification]);
 
   useEffect(() => {
-    if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-      setConnectedWallet(window.tronWeb.defaultAddress.base58);
+    function getTronweb() {
+      var obj = setInterval(async () => {
+        if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+          clearInterval(obj);
+          // @ts-ignore
+          setConnectedWallet(window.tronWeb.defaultAddress.base58);
+        }
+      }, 10);
     }
+    getTronweb();
   }, []);
 
   return (
