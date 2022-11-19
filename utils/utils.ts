@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
 import { Fund, WithdrawRequest } from "./types";
 import IERC20 from "@openzeppelin/contracts/build/contracts/IERC20.json";
-import tronWeb from "./tronweb";
+import getTronWeb from "./tronweb";
 
 const getGiftBoxContract = async () => {
+  let tronWeb = getTronWeb();
   if (!tronWeb) throw Error("TronWeb not available");
   return await tronWeb.contract().at(process.env.NEXT_PUBLIC_GIFTBOX_ADDRESS);
 };
@@ -14,12 +15,14 @@ export const getStableCoinAddress = async () => {
 };
 
 const getStableCoinContract = async () => {
+  let tronWeb = getTronWeb();
   if (!tronWeb) throw Error("TronWeb not available");
   const stableCoinAddress = await getStableCoinAddress();
   return await tronWeb.contract().at(stableCoinAddress);
 };
 
 const getFundTokenContract = async (fundTokenAddress: string) => {
+  let tronWeb = getTronWeb();
   if (!tronWeb) throw Error("TronWeb not available");
   return await tronWeb.contract(IERC20.abi, fundTokenAddress);
 };
@@ -80,7 +83,7 @@ export const depositStableCoins = async (
 
   // Approve GiftBox to spend stablecoins from user's wallet
   const allowanceBn = await stableCoinContract
-    .allowance(tronWeb?.defaultAddress.hex, giftBoxContract.address)
+    .allowance(getTronWeb()?.defaultAddress.hex, giftBoxContract.address)
     .call();
   const allowance = allowanceBn.div(BigInt(10 ** 18)).toNumber();
   if (allowance < amount) {
@@ -127,11 +130,12 @@ export const voteOnWithdrawRequest = async (
     .send({ feeLimit: 500_000_000, shouldPollResponse: true });
 };
 
-export const requestAccounts = () => {
-  if (!tronWeb) throw Error("TronWeb not available");
-  // @ts-ignore
-  return tronWeb.request({ method: "tron_requestAccounts" });
-};
+// export const requestAccounts = () => {
+//   let tronWeb = getTronWeb();
+//   if (tronWeb) throw Error("TronWeb not available");
+//   // @ts-ignore
+//   return tronWeb.request({ method: "tron_requestAccounts" });
+// };
 
 export const getWithdrawRequests = async (
   fundTokenAddress: string
