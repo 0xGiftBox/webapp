@@ -8,11 +8,16 @@ import FundCard from "./FundCard";
 
 export type ListFundsProps = {
   filterFunction?: (arg0: Fund) => Promise<boolean>;
+  funds?: Fund[] | null;
 };
 
-export const ListFunds = ({ filterFunction }: ListFundsProps) => {
+export const ListFunds = (props: ListFundsProps) => {
+  const filterFunction = props.filterFunction;
+
   const [loading, isLoading] = useState(false);
-  const [funds, setFunds] = useState<Fund[] | null>(null);
+  const [funds, setFunds] = useState<Fund[] | null>(
+    props.funds ? props.funds : null
+  );
   const [notification, setNotification] = useState("");
 
   useEffect(() => {
@@ -53,12 +58,7 @@ export const ListFunds = ({ filterFunction }: ListFundsProps) => {
     }
   }, [notification]);
 
-  return loading ? (
-    <p>
-      {`Please wait `}
-      <Loader variant="dots" />
-    </p>
-  ) : funds?.length ? (
+  return funds?.length ? (
     <List>
       <SimpleGrid cols={3}>
         {funds.map((fund, index) => (
