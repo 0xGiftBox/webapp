@@ -19,7 +19,7 @@ export type WithdrawRequest = {
   title: string;
   status: WithdrawRequestStatus;
   amount: number;
-  deadline: Date;
+  deadline: string;
   numVotesFor: number;
   numVotesAgainst: number;
 };

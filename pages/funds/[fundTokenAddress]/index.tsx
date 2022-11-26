@@ -22,21 +22,29 @@ import {
   executeWithdrawRequest,
   getFund,
   getFundReferences,
+  getFundTokenAddresses,
   getWithdrawRequests,
   voteOnWithdrawRequest,
 } from "../../../utils/utils";
 import { WalletContext } from "../../../utils/context";
 import getTronWeb from "../../../utils/tronweb";
-
-const FundPage = () => {
+import { GetStaticPaths, GetStaticProps } from "next";
+import path from "path";
+interface FundPageProps {
+  fund: Fund | null;
+  fundReferences: string[] | null;
+  withdrawRequests: WithdrawRequest[] | null;
+  fundManagerAddress: string;
+}
+const FundPage = (props: FundPageProps) => {
   const router = useRouter();
   const { connectedWallet } = useContext(WalletContext);
   const { fundTokenAddress } = router.query;
 
-  const [fund, setFund] = useState<Fund | null>(null);
-  const [fundReferences, setFundReferences] = useState<string[] | null>(null);
-
-  getFundReferences;
+  const [fund, setFund] = useState<Fund | null>(props.fund);
+  const [fundReferences, setFundReferences] = useState<string[] | null>(
+    props.fundReferences
+  );
   const [isFundTokenAddressValid, setIsFundTokenAddressValid] = useState(true);
   const [amountToDeposit, setAmountToDeposit] = useState(10);
   const [depositLoading, setDepositLoading] = useState(false);
@@ -44,10 +52,12 @@ const FundPage = () => {
   const [rejectVoteLoading, setRejectVoteLoading] = useState(false);
   const [executeLoading, setExecuteLoading] = useState(false);
   const [isFundManager, setIsFundManager] = useState(false);
-  const [fundManagerAddress, setFundManagerAddress] = useState("");
+  const [fundManagerAddress, setFundManagerAddress] = useState(
+    props.fundManagerAddress
+  );
   const [withdrawRequests, setWithdrawRequests] = useState<
     WithdrawRequest[] | null
-  >(null);
+  >(props.withdrawRequests);
 
   // Fetch fund details
   useEffect(() => {
@@ -171,8 +181,6 @@ const FundPage = () => {
 
   return (
     <div>
-      <LoadingOverlay visible={!fund || !withdrawRequests} overlayBlur={0} />
-
       <Card shadow="sm" p="lg" radius="md" mr={"20vw"} mb={20} withBorder>
         <Group position="apart" mt="md" mb="xs">
           <Stack>
@@ -279,7 +287,7 @@ const FundPage = () => {
                       </td>
                       <td>{request.numVotesFor}</td>
                       <td>{request.numVotesAgainst}</td>
-                      <td>{request.deadline.toDateString()}</td>
+                      <td>{request.deadline}</td>
                       <td>
                         {
                           <Button
@@ -327,3 +335,52 @@ const FundPage = () => {
 };
 
 export default FundPage;
+
+//Server side rendering
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const fundTokenAddresses = await getFundTokenAddresses();
+  interface path {
+    params: {
+      fundTokenAddress: string;
+    };
+  }
+  const paths: path[] = [];
+  fundTokenAddresses.map((address) => {
+    paths.push({
+      params: {
+        fundTokenAddress: address,
+      },
+    });
+  });
+  return {
+    paths: paths,
+    fallback: true, // can also be true or 'blocking'
+  };
+};
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const tronWeb = getTronWeb();
+  const fundTokenAddress = context?.params?.fundTokenAddress;
+
+  let withdrawRequests: WithdrawRequest[] | null = null;
+  let fund: Fund | null = null;
+  let fundReferences: string[] | null = null;
+  let fundManagerAddress: string = "";
+
+  if (typeof fundTokenAddress === "string") {
+    fund = await getFund(fundTokenAddress);
+    fundReferences = await getFundReferences(fundTokenAddress);
+    withdrawRequests = await getWithdrawRequests(fundTokenAddress);
+    fundManagerAddress = tronWeb?.address.fromHex(fund?.manager);
+  }
+  return {
+    props: {
+      fund: fund,
+      fundReferences: fundReferences,
+      withdrawRequests: withdrawRequests,
+      fundManagerAddress: fundManagerAddress,
+    }, // will be passed to the page component as props
+    revalidate: 60, // In seconds
+  };
+};
