@@ -28,7 +28,9 @@ function App({ Component, pageProps }: AppProps) {
     useState<connectionStatus | null>(null);
 
   const checkConnectionStatus = () => {
-    setConnectionStatus(getConnectionStatus());
+    setTimeout(() => {
+      setConnectionStatus(getConnectionStatus());
+    }, 500);
   };
 
   useEffect(() => {

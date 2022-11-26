@@ -1,5 +1,3 @@
-import { useState, useEffect, useContext } from "react";
-import { showNotification } from "@mantine/notifications";
 import { Title } from "@mantine/core";
 import { GetStaticProps } from "next";
 import Link from "next/link";
@@ -7,16 +5,11 @@ import { ListFunds } from "../components/ListFunds";
 import styles from "../styles/Home.module.css";
 import { Fund } from "../utils/types";
 import { getFundTokenAddresses, getFund } from "../utils/utils";
-import { connectionStatus } from "../utils/types";
-import { getConnectionStatus } from "../utils/tronweb";
-import { ConnectionStatusContext } from "../utils/context";
 
 interface HomeProps {
   funds: Fund[] | null;
 }
 export default function Home({ funds }: HomeProps) {
-  const { checkConnectionStatus } = useContext(ConnectionStatusContext);
-
   return (
     <div className={styles.container}>
       <main className={styles.main}>
@@ -28,10 +21,7 @@ export default function Home({ funds }: HomeProps) {
           </Link>
           {` or choosing a fund from below to donate to.`}
         </p>
-        <ListFunds
-          funds={funds}
-          checkConnectionStatus={checkConnectionStatus}
-        />
+        <ListFunds funds={funds} />
       </main>
       <footer className={styles.footer}></footer>
     </div>

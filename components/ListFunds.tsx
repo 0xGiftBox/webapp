@@ -20,8 +20,12 @@ export const ListFunds = (props: ListFundsProps) => {
   );
 
   useEffect(() => {
+    checkConnectionStatus?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     const fetchFunds = async () => {
-      checkConnectionStatus?.();
       try {
         isLoading(true);
         const fundTokenAddresses = await getFundTokenAddresses();

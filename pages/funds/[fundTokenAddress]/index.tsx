@@ -60,10 +60,14 @@ const FundPage = (props: FundPageProps) => {
     WithdrawRequest[] | null
   >(props.withdrawRequests);
 
+  useEffect(() => {
+    checkConnectionStatus?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Fetch fund details
   useEffect(() => {
     const fetchFund = async () => {
-      checkConnectionStatus?.();
       let tronWeb = await getTronWeb();
       if (typeof fundTokenAddress !== "string") return;
 
@@ -95,7 +99,6 @@ const FundPage = (props: FundPageProps) => {
   useEffect(() => {
     const fetchFundReferences = async () => {
       if (typeof fundTokenAddress !== "string") return;
-
       try {
         const fundReferences = await getFundReferences(fundTokenAddress);
         if (!fundReferences) {
