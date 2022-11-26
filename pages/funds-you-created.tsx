@@ -6,7 +6,7 @@ import styles from "../styles/Home.module.css";
 
 export default function FundsCreated() {
   const filterFunction = async (x: Fund) => {
-    return x.manager === window?.tronWeb?.defaultAddress.hex;
+    return x.manager === window?.tronWeb?.defaultAddress.base58;
   };
   return (
     <div className={styles.container}>
