@@ -62,7 +62,7 @@ const FundPage = (props: FundPageProps) => {
   // Fetch fund details
   useEffect(() => {
     const fetchFund = async () => {
-      let tronWeb = getTronWeb();
+      let tronWeb = await getTronWeb();
       if (typeof fundTokenAddress !== "string") return;
 
       try {
@@ -177,7 +177,6 @@ const FundPage = (props: FundPageProps) => {
   };
 
   // Show 404 if fund token address is invalid
-  if (!isFundTokenAddressValid) return <ErrorPage statusCode={404}></ErrorPage>;
 
   return (
     <div>
@@ -360,7 +359,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const tronWeb = getTronWeb();
+  const tronWeb = await getTronWeb();
   const fundTokenAddress = context?.params?.fundTokenAddress;
 
   let withdrawRequests: WithdrawRequest[] | null = null;

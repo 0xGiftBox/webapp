@@ -4,7 +4,7 @@ import IERC20 from "@openzeppelin/contracts/build/contracts/IERC20.json";
 import getTronWeb from "./tronweb";
 
 const getGiftBoxContract = async () => {
-  let tronWeb = getTronWeb();
+  let tronWeb = await getTronWeb();
   if (!tronWeb) throw Error("TronWeb not available");
   return await tronWeb.contract().at(process.env.NEXT_PUBLIC_GIFTBOX_ADDRESS);
 };
@@ -15,14 +15,14 @@ export const getStableCoinAddress = async () => {
 };
 
 const getStableCoinContract = async () => {
-  let tronWeb = getTronWeb();
+  let tronWeb = await getTronWeb();
   if (!tronWeb) throw Error("TronWeb not available");
   const stableCoinAddress = await getStableCoinAddress();
   return await tronWeb.contract().at(stableCoinAddress);
 };
 
 const getFundTokenContract = async (fundTokenAddress: string) => {
-  let tronWeb = getTronWeb();
+  let tronWeb = await getTronWeb();
   if (!tronWeb) throw Error("TronWeb not available");
   return await tronWeb.contract(IERC20.abi, fundTokenAddress);
 };
@@ -59,16 +59,16 @@ export const getFundTokenAddresses = async (): Promise<string[]> => {
 export const getFund = async (
   fundTokenAddress: string
 ): Promise<Fund | null> => {
+  const tronWeb = await getTronWeb();
   const giftBoxContract = await getGiftBoxContract();
 
   const fund = await giftBoxContract.funds(fundTokenAddress).call();
   if (fund.manager == "410000000000000000000000000000000000000000") return null;
-
   return {
     fundTokenAddress,
     isOpen: fund.isOpen,
     name: fund.name,
-    manager: fund.manager,
+    manager: tronWeb?.address.fromHex(fund.manager),
     amountDeposited: fund.amountDeposited.div(BigInt(10 ** 18)).toNumber(),
     balance: fund.balance.div(BigInt(10 ** 18)).toNumber(),
   };
@@ -80,10 +80,11 @@ export const depositStableCoins = async (
 ) => {
   const giftBoxContract = await getGiftBoxContract();
   const stableCoinContract = await getStableCoinContract();
+  let tronWeb = await getTronWeb();
 
   // Approve GiftBox to spend stablecoins from user's wallet
   const allowanceBn = await stableCoinContract
-    .allowance(getTronWeb()?.defaultAddress.hex, giftBoxContract.address)
+    .allowance(tronWeb?.defaultAddress.hex, giftBoxContract.address)
     .call();
   const allowance = allowanceBn.div(BigInt(10 ** 18)).toNumber();
   if (allowance < amount) {
@@ -129,13 +130,6 @@ export const voteOnWithdrawRequest = async (
     .voteOnWithdrawRequest(fundTokenAddress, withdrawRequestId, vote)
     .send({ feeLimit: 500_000_000, shouldPollResponse: true });
 };
-
-// export const requestAccounts = () => {
-//   let tronWeb = getTronWeb();
-//   if (tronWeb) throw Error("TronWeb not available");
-//   // @ts-ignore
-//   return tronWeb.request({ method: "tron_requestAccounts" });
-// };
 
 export const getWithdrawRequests = async (
   fundTokenAddress: string
