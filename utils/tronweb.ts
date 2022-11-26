@@ -1,5 +1,4 @@
 const TronWeb = require("tronweb");
-
 const fullNode = "https://api.shasta.trongrid.io";
 const solidityNode = "https://api.shasta.trongrid.io";
 const eventServer = "https://api.shasta.trongrid.io";
@@ -26,4 +25,28 @@ const getTronWeb = async () => {
     return tronweb;
   }
 };
+
+export const getConnectionStatus = () => {
+  if (typeof window !== "undefined") {
+    //We are in the browser
+    let connectionStatus = {
+      isTronLinkInstalled: false,
+      isTronLinkUnlocked: false,
+      network: "",
+    };
+    if (typeof window.tronLink !== "undefined") {
+      connectionStatus.isTronLinkInstalled = true;
+      if (window.tronLink.ready) {
+        connectionStatus.isTronLinkUnlocked = true;
+        let tronWeb = window.tronLink.tronWeb;
+        if (tronWeb.fullNode.host.includes("shasta")) {
+          connectionStatus.network = "shasta";
+        }
+      }
+    }
+    return connectionStatus;
+  }
+  return null;
+};
+
 export default getTronWeb;
