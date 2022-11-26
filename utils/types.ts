@@ -23,3 +23,9 @@ export type WithdrawRequest = {
   numVotesFor: number;
   numVotesAgainst: number;
 };
+
+export type connectionStatus = {
+  isTronLinkInstalled: boolean;
+  isTronLinkUnlocked: boolean;
+  network: string;
+};

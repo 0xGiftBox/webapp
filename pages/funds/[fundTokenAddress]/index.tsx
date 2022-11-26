@@ -26,7 +26,7 @@ import {
   getWithdrawRequests,
   voteOnWithdrawRequest,
 } from "../../../utils/utils";
-import { WalletContext } from "../../../utils/context";
+import { WalletContext, ConnectionStatusContext } from "../../../utils/context";
 import getTronWeb from "../../../utils/tronweb";
 import { GetStaticPaths, GetStaticProps } from "next";
 import path from "path";
@@ -39,6 +39,7 @@ interface FundPageProps {
 const FundPage = (props: FundPageProps) => {
   const router = useRouter();
   const { connectedWallet } = useContext(WalletContext);
+  const { checkConnectionStatus } = useContext(ConnectionStatusContext);
   const { fundTokenAddress } = router.query;
 
   const [fund, setFund] = useState<Fund | null>(props.fund);
@@ -62,6 +63,7 @@ const FundPage = (props: FundPageProps) => {
   // Fetch fund details
   useEffect(() => {
     const fetchFund = async () => {
+      checkConnectionStatus?.();
       let tronWeb = await getTronWeb();
       if (typeof fundTokenAddress !== "string") return;
 
@@ -75,17 +77,18 @@ const FundPage = (props: FundPageProps) => {
         setFund(fund);
         setIsFundManager(
           // @ts-ignore
-          connectedWallet == tronWeb?.address.fromHex(fund.manager)
+          connectedWallet == fund.manager
         );
         // @ts-ignore
 
-        setFundManagerAddress(tronWeb?.address.fromHex(fund.manager));
+        setFundManagerAddress(fund.manager);
       } catch (error) {
         setIsFundTokenAddressValid(false);
       }
     };
 
     fetchFund();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fundTokenAddress, connectedWallet]);
 
   // Fetch fund references
@@ -109,6 +112,7 @@ const FundPage = (props: FundPageProps) => {
 
   // Handle click on deposit// donate button
   const handleDeposit = async () => {
+    checkConnectionStatus?.();
     if (typeof fundTokenAddress !== "string") return;
     setDepositLoading(true);
     try {
@@ -140,6 +144,7 @@ const FundPage = (props: FundPageProps) => {
 
   //Handle button onclick for vote approval or rejection
   const handleVote = async (index: number, vote: boolean) => {
+    checkConnectionStatus?.();
     if (vote) {
       setApproveVoteLoading(true);
     } else {
@@ -163,6 +168,7 @@ const FundPage = (props: FundPageProps) => {
 
   //Handle button onclick for executing withdraw requests
   const handleExecute = async (index: number) => {
+    checkConnectionStatus?.();
     setExecuteLoading(true);
 
     if (typeof fundTokenAddress !== "string") return;

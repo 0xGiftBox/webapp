@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { List, Text, Loader, SimpleGrid } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
-
 import { Fund } from "../utils/types";
 import { getFund, getFundTokenAddresses } from "../utils/utils";
 import FundCard from "./FundCard";
+import { ConnectionStatusContext } from "../utils/context";
 
 export type ListFundsProps = {
   filterFunction?: (arg0: Fund) => Promise<boolean>;
@@ -12,16 +11,17 @@ export type ListFundsProps = {
 };
 
 export const ListFunds = (props: ListFundsProps) => {
-  const filterFunction = props.filterFunction;
+  const { filterFunction } = props;
+  const { checkConnectionStatus } = useContext(ConnectionStatusContext);
 
   const [loading, isLoading] = useState(false);
   const [funds, setFunds] = useState<Fund[] | null>(
     props.funds ? props.funds : null
   );
-  const [notification, setNotification] = useState("");
 
   useEffect(() => {
     const fetchFunds = async () => {
+      checkConnectionStatus?.();
       try {
         isLoading(true);
         const fundTokenAddresses = await getFundTokenAddresses();
@@ -35,29 +35,24 @@ export const ListFunds = (props: ListFundsProps) => {
         const filteredFunds = nonNullFunds.filter((_, i) => filterBooleans[i]);
         setFunds(filteredFunds);
       } catch (e) {
-        if (window.tronWeb) {
-          setNotification("Please use shasta testnet.");
-        } else {
-          setNotification("Please install tronlink wallet.");
-        }
+        console.log("err:", e);
       }
       isLoading(false);
       // @ts-ignore
     };
 
     fetchFunds();
-  }, [filterFunction]);
 
-  useEffect(() => {
-    if (notification !== "") {
-      showNotification({
-        title: notification,
-        message: "",
-        color: "red",
-      });
-    }
-  }, [notification]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  if (!funds && loading) {
+    return (
+      <p>
+        {`Please wait `}
+        <Loader variant="dots" />
+      </p>
+    );
+  }
   return funds?.length ? (
     <List>
       <SimpleGrid cols={3}>

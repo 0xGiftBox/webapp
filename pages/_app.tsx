@@ -17,34 +17,43 @@ import Link from "next/link";
 
 import styles from "./../styles/Home.module.css";
 import "../styles/globals.css";
+import { connectionStatus } from "../utils/types";
 import { WalletContext } from "../utils/context";
+import { ConnectionStatusContext } from "../utils/context";
+import { getConnectionStatus } from "../utils/tronweb";
 
 function App({ Component, pageProps }: AppProps) {
   const [connectedWallet, setConnectedWallet] = useState<string | null>(null);
-  const [notification, setNotification] = useState("");
+  const [connectionStatus, setConnectionStatus] =
+    useState<connectionStatus | null>(null);
+
+  const checkConnectionStatus = () => {
+    setConnectionStatus(getConnectionStatus());
+  };
 
   useEffect(() => {
-    window.addEventListener("message", function (e) {
-      if (e.data.message && e.data.message.action == "tabReply")
-        if (e.data.message.data.data == "") {
-          setNotification("Please unlock tronlink wallet");
-        }
-    });
-
-    return () => {
-      window.removeEventListener("message", () => {}, false);
-    };
-  });
-
-  useEffect(() => {
-    if (notification !== "") {
-      showNotification({
-        title: notification,
-        message: "",
-        color: "red",
-      });
+    if (connectionStatus) {
+      if (!connectionStatus?.isTronLinkInstalled) {
+        showNotification({
+          title: "Please install TronLink",
+          message: "",
+          color: "red",
+        });
+      } else if (!connectionStatus.isTronLinkUnlocked) {
+        showNotification({
+          title: "Please unlock TronLink",
+          message: "",
+          color: "red",
+        });
+      } else if (connectionStatus.network !== "shasta") {
+        showNotification({
+          title: "Please switch to Shasta Testnet",
+          message: "",
+          color: "red",
+        });
+      }
     }
-  }, [notification]);
+  }, [connectionStatus]);
 
   useEffect(() => {
     function getTronweb() {
@@ -114,9 +123,11 @@ function App({ Component, pageProps }: AppProps) {
             },
           })}
         >
-          <WalletContext.Provider value={{ connectedWallet }}>
-            <Component {...pageProps} />
-          </WalletContext.Provider>
+          <ConnectionStatusContext.Provider value={{ checkConnectionStatus }}>
+            <WalletContext.Provider value={{ connectedWallet }}>
+              <Component {...pageProps} />
+            </WalletContext.Provider>
+          </ConnectionStatusContext.Provider>
         </AppShell>
       </NotificationsProvider>
     </MantineProvider>

@@ -9,10 +9,13 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { createFund } from "../utils/utils";
+import { ConnectionStatusContext } from "../utils/context";
 
 const CreateFund = () => {
+  const { checkConnectionStatus } = useContext(ConnectionStatusContext);
+
   const router = useRouter();
   const form = useForm({
     initialValues: {
@@ -30,6 +33,7 @@ const CreateFund = () => {
 
   const onFormSubmit = async (values: typeof form.values) => {
     setCreateFundLoading(true);
+    checkConnectionStatus?.();
 
     try {
       const references = values.references.split(/\r?\n/);
