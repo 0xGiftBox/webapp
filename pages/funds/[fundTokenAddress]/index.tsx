@@ -36,6 +36,7 @@ interface FundPageProps {
   fundReferences: string[] | null;
   withdrawRequests: WithdrawRequest[] | null;
   fundManagerAddress: string;
+  formattedFundTokenAddress: string;
 }
 const FundPage = (props: FundPageProps) => {
   const router = useRouter();
@@ -49,8 +50,9 @@ const FundPage = (props: FundPageProps) => {
   );
 
   const [isFundTokenAddressValid, setIsFundTokenAddressValid] = useState(true);
-  const [formattedFundTokenAddress, setFormattedFundTokenAddress] =
-    useState("");
+  const [formattedFundTokenAddress, setFormattedFundTokenAddress] = useState(
+    props.formattedFundTokenAddress
+  );
   const [amountToDeposit, setAmountToDeposit] = useState(10);
   const [depositLoading, setDepositLoading] = useState(false);
   const [approveVoteLoading, setApproveVoteLoading] = useState(false);
@@ -92,6 +94,8 @@ const FundPage = (props: FundPageProps) => {
         setFundManagerAddress(fund.manager);
         setFormattedFundTokenAddress(
           tronWeb?.address.fromHex(fundTokenAddress)
+            ? tronWeb?.address.fromHex(fundTokenAddress)
+            : ""
         );
       } catch (error) {
         setIsFundTokenAddressValid(false);
@@ -193,7 +197,6 @@ const FundPage = (props: FundPageProps) => {
   };
 
   // Show 404 if fund token address is invalid
-
   return (
     <div>
       <Card shadow="sm" p="lg" radius="md" mr={"20vw"} mb={20} withBorder>
@@ -397,12 +400,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
   let fund: Fund | null = null;
   let fundReferences: string[] | null = null;
   let fundManagerAddress: string = "";
+  let formattedFundTokenAddress: string = "";
 
   if (typeof fundTokenAddress === "string") {
     fund = await getFund(fundTokenAddress);
     fundReferences = await getFundReferences(fundTokenAddress);
     withdrawRequests = await getWithdrawRequests(fundTokenAddress);
     fundManagerAddress = tronWeb?.address.fromHex(fund?.manager);
+    formattedFundTokenAddress = tronWeb?.address.fromHex(
+      fund?.fundTokenAddress
+    );
   }
   return {
     props: {
@@ -410,6 +417,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       fundReferences: fundReferences,
       withdrawRequests: withdrawRequests,
       fundManagerAddress: fundManagerAddress,
+      formattedFundTokenAddress: formattedFundTokenAddress,
     }, // will be passed to the page component as props
     revalidate: 60, // In seconds
   };
