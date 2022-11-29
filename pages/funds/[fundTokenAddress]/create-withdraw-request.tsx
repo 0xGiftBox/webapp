@@ -76,6 +76,7 @@ const CreateWithdrawRequest = () => {
           <DatePicker
             placeholder="Pick deadline for voting to end"
             label="Deadline for voting"
+            dropdownType="modal"
             minDate={new Date()}
             {...form.getInputProps("deadline")}
           />
