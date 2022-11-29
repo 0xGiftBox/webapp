@@ -10,8 +10,9 @@ import {
   Badge,
   Title,
   Table,
+  Box,
 } from "@mantine/core";
-import { IconCurrencyDollar } from "@tabler/icons";
+import { IconCurrencyDollar, IconExternalLink } from "@tabler/icons";
 import { useRouter } from "next/router";
 import ErrorPage from "next/error";
 import Link from "next/link";
@@ -46,7 +47,10 @@ const FundPage = (props: FundPageProps) => {
   const [fundReferences, setFundReferences] = useState<string[] | null>(
     props.fundReferences
   );
+
   const [isFundTokenAddressValid, setIsFundTokenAddressValid] = useState(true);
+  const [formattedFundTokenAddress, setFormattedFundTokenAddress] =
+    useState("");
   const [amountToDeposit, setAmountToDeposit] = useState(10);
   const [depositLoading, setDepositLoading] = useState(false);
   const [approveVoteLoading, setApproveVoteLoading] = useState(false);
@@ -86,6 +90,9 @@ const FundPage = (props: FundPageProps) => {
         // @ts-ignore
 
         setFundManagerAddress(fund.manager);
+        setFormattedFundTokenAddress(
+          tronWeb?.address.fromHex(fundTokenAddress)
+        );
       } catch (error) {
         setIsFundTokenAddressValid(false);
       }
@@ -192,7 +199,22 @@ const FundPage = (props: FundPageProps) => {
       <Card shadow="sm" p="lg" radius="md" mr={"20vw"} mb={20} withBorder>
         <Group position="apart" mt="md" mb="xs">
           <Stack>
-            <Title order={2}>{fund?.name}</Title>
+            <Group>
+              <Title order={2}>{fund?.name}</Title>
+              <Link
+                className="link"
+                href={`https://shasta.tronscan.org/#/address/${formattedFundTokenAddress}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {
+                  <Box pt={10}>
+                    <IconExternalLink size={20} />
+                  </Box>
+                }
+              </Link>
+            </Group>
+
             <Group>
               <Title order={6}>{`Manager:`}</Title>
               <Text size={"sm"}>
