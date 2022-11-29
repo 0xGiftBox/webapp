@@ -1,7 +1,16 @@
 const TronWeb = require("tronweb");
+
 const fullNode = "https://api.shasta.trongrid.io";
 const solidityNode = "https://api.shasta.trongrid.io";
 const eventServer = "https://api.shasta.trongrid.io";
+
+export const getPrivateTronWeb = () =>
+  new TronWeb(
+    fullNode,
+    solidityNode,
+    eventServer,
+    process.env.TRONWEB_PRIVATE_KEY
+  );
 
 const getTronWeb = async () => {
   if (typeof window !== "undefined" && typeof window.tronLink !== "undefined") {
