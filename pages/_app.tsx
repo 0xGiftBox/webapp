@@ -104,6 +104,11 @@ function App({ Component, pageProps }: AppProps) {
               <Navbar.Section grow mt="md">
                 {}
               </Navbar.Section>
+              <Navbar.Section pb={20}>
+                <Link className={styles.navLink} href="/mint-stablecoins">
+                  Mint test stablecoins
+                </Link>
+              </Navbar.Section>
             </Navbar>
           }
           header={
