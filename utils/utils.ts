@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import axios from "axios";
 import { Fund, WithdrawRequest } from "./types";
 import IERC20 from "@openzeppelin/contracts/build/contracts/IERC20.json";
 import getTronWeb from "./tronweb";
@@ -235,4 +236,11 @@ export const getFundTokenBalance = async (
   const fundTokenContract = await getFundTokenContract(fundTokenAddress);
   const balanceBn = await fundTokenContract.balanceOf(user).call();
   return balanceBn.div(BigInt(10 ** 18)).toNumber();
+};
+
+export const mintStableCoins = async (address: string, amount: number) => {
+  const response = await axios.get("/api/mintStableCoins", {
+    params: { address, amount },
+  });
+  return response.data;
 };
