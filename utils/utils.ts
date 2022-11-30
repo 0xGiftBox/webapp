@@ -158,8 +158,8 @@ export const getWithdrawRequests = async (
       status: x.status,
       amount: x.amount.div(BigInt(10 ** 18)).toNumber(),
       deadline: new Date(x.deadline.toNumber() * 1000).toDateString(),
-      numVotesFor: x.numVotesFor.toNumber(),
-      numVotesAgainst: x.numVotesAgainst.toNumber(),
+      numVotesFor: x.numVotesFor.div(BigInt(10 ** 18)).toNumber(),
+      numVotesAgainst: x.numVotesAgainst.div(BigInt(10 ** 18)).toNumber(),
     };
   });
 };

@@ -1,5 +1,3 @@
-import { ethers } from "ethers";
-
 export type Fund = {
   fundTokenAddress: string;
   isOpen: boolean;
