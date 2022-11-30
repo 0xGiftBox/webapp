@@ -57,6 +57,20 @@ function App({ Component, pageProps }: AppProps) {
     }
   }, [connectionStatus]);
 
+  //Check for account change event in tronLink
+  useEffect(() => {
+    const onMessage = (e: any) => {
+      if (e.data.message && e.data.message.action == "accountsChanged") {
+        // @ts-ignore
+        setConnectedWallet(window.tronWeb.defaultAddress.base58);
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => {
+      window.addEventListener("message", onMessage);
+    };
+  }, []);
+
   useEffect(() => {
     function getTronweb() {
       let i = 0;
